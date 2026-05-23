@@ -1,0 +1,377 @@
+﻿@model App.Models.Cart
+
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<h2 class="mb-4">
+    Корзина
+    (<span id="total-items-count">
+        @(Model?.CartItems?.Sum(i => i.Quantity) ?? 0)
+    </span> товаров)
+</h2>
+
+@if (Model?.CartItems == null || Model.CartItems.Count == 0)
+{
+    <div class="alert alert-info text-center py-5">
+
+        <h4>Ваша корзина пуста</h4>
+
+        <a asp-controller="Product"
+           asp-action="Index"
+           class="btn btn-primary mt-3">
+
+            Перейти в каталог
+
+        </a>
+
+    </div>
+}
+else
+{
+    <div class="cart-layout">
+
+        <!-- ТОВАРЫ -->
+        <div class="cart-products">
+
+            <div class="card">
+                <div class="card-body p-0">
+
+                    @foreach (var item in Model.CartItems)
+                    {
+                        var price = item.Product?.Price ?? 0;
+
+                        var productId = item.ProductId > 0
+                        ? item.ProductId
+                        : (item.Product?.Id ?? 0);
+
+                        var productDiscount = item.Product?.Discount ?? 0;
+
+                        var oldPrice = productDiscount > 0
+                        ? price / (1 - (productDiscount / 100m))
+                        : price;
+
+                        var total = price * item.Quantity;
+
+                        var oldTotal = oldPrice * item.Quantity;
+
+                        <div class="d-flex border-bottom p-3 align-items-center cart-item">
+
+                            <!-- ФОТО -->
+                            <div class="me-3">
+
+                                @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                {
+                                    <img src="@item.Product.ImageUrl"
+                                         alt="@item.Product.Name"
+                                         class="cart-product-image">
+                                }
+
+                            </div>
+
+                            <!-- ИНФОРМАЦИЯ -->
+                            <div class="flex-grow-1">
+
+                                <h5 class="mb-1 fw-bold">
+                                    @item.Product?.Name
+                                </h5>
+
+                                <p class="text-muted small mb-2">
+                                    @item.Product?.Brand?.Name
+                                </p>
+
+                                <div class="product-prices">
+
+                                    <span class="new-price">
+                                        @price.ToString("0 ₽")
+                                    </span>
+
+                                    @if (productDiscount > 0)
+                                    {
+                                        <span class="old-price">
+                                            @oldPrice.ToString("0 ₽")
+                                        </span>
+
+                                        <span class="discount-badge">
+                                            -@productDiscount%
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                            <!-- КОЛИЧЕСТВО -->
+                            <div class="d-flex align-items-center gap-3 mx-4">
+
+                                <button onclick="updateQuantity(@productId, -1)"
+                                        class="btn btn-outline-secondary btn-sm">
+                                    -
+                                </button>
+
+                                <span class="quantity fw-bold"
+                                      id="qty-@productId">
+
+                                    @item.Quantity
+
+                                </span>
+
+                                <button onclick="updateQuantity(@productId, 1)"
+                                        class="btn btn-outline-secondary btn-sm">
+                                    +
+                                </button>
+
+                            </div>
+
+                            <!-- ИТОГО -->
+                            <div class="text-end me-4 cart-item-total">
+
+                                <div class="fw-bold fs-5">
+
+                                    @total.ToString("0 ₽")
+
+                                </div>
+
+                                @if (productDiscount > 0)
+                                {
+                                    <div class="cart-old-price">
+
+                                        @oldTotal.ToString("0 ₽")
+
+                                    </div>
+
+                                    <div class="cart-discount">
+
+                                        -@productDiscount%
+
+                                    </div>
+                                }
+
+                            </div>
+
+                            <!-- УДАЛИТЬ -->
+                            <a asp-action="RemoveFromCart"
+                               asp-route-id="@item.Id"
+                               class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('Удалить товар?')">
+
+                                ✕
+
+                            </a>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ПРАВАЯ ПАНЕЛЬ -->
+        <div class="cart-summary">
+
+            <h3 class="mb-4">Ваш заказ</h3>
+
+            <div class="summary-row">
+
+                <span>
+                    Товары (@Model.CartItems.Sum(x => x.Quantity) шт.)
+                </span>
+
+                <span>
+                    @ViewBag.TotalOld.ToString("0") ₽
+                </span>
+
+            </div>
+
+            <div class="summary-row discount-row">
+
+                <span>Скидка</span>
+
+                <span>
+                    -@ViewBag.TotalDiscount.ToString("0") ₽
+                    (-@ViewBag.DiscountPercent%)
+                </span>
+
+            </div>
+
+            <hr />
+
+            <div class="summary-total">
+
+                <span>Итого:</span>
+
+                <span>
+                    @ViewBag.TotalCurrent.ToString("0") ₽
+                </span>
+
+            </div>
+
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Order"
+                   asp-action="Create"
+                   class="checkout-btn text-decoration-none text-white d-flex align-items-center justify-content-center">
+
+                    Оформить заказ
+
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Account"
+                   asp-action="Login"
+                   class="checkout-btn text-decoration-none d-flex align-items-center justify-content-center">
+
+                    Оформить заказ
+
+                </a>
+            }
+
+        </div>
+
+    </div>
+}
+
+<style>
+
+    .cart-layout {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+    }
+
+    .cart-products {
+        flex: 1;
+    }
+
+    .cart-summary {
+        width: 360px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        padding: 25px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        font-size: 18px;
+    }
+
+    .discount-row {
+        color: #ff1493;
+        font-weight: 700;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 34px;
+        font-weight: 700;
+        color: #0a8f47;
+        margin-top: 25px;
+    }
+
+    .checkout-btn {
+        width: 100%;
+        margin-top: 30px;
+        background: #0a8f47;
+        border: none;
+        color: white;
+        border-radius: 12px;
+        padding: 18px;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .cart-product-image {
+        width: 105px;
+        height: 105px;
+        object-fit: cover;
+        border-radius: 14px;
+    }
+
+    .product-prices {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .new-price {
+        color: #0a8f47;
+        font-weight: 700;
+        font-size: 30px;
+    }
+
+    .old-price {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 18px;
+    }
+
+    .discount-badge {
+        color: #ff1493;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .cart-item-total {
+        min-width: 140px;
+    }
+
+    .cart-old-price {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 16px;
+    }
+
+    .cart-discount {
+        color: #ff1493;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+</style>
+
+<script>
+
+    async function updateQuantity(id, change)
+    {
+        try
+        {
+            const response = await fetch('/Cart/UpdateQuantity',
+            {
+                method: 'POST',
+
+                headers:
+                {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+
+                body: `id=${id}&change=${change}`
+            });
+
+            const data = await response.json();
+
+            if (!data.success)
+            {
+                alert(data.message || 'Ошибка');
+                return;
+            }
+
+            location.reload();
+        }
+        catch (e)
+        {
+            console.error(e);
+            alert('Ошибка при изменении количества');
+        }
+    }
+
+</script>

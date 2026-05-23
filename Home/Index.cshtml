@@ -1,0 +1,215 @@
+﻿@model IEnumerable<App.Models.Product>
+
+@{
+    ViewData["Title"] = "Главная - CosmoShop";
+}
+
+<!-- HERO -->
+<section class="hero-section">
+
+    <div class="hero-content">
+
+        <h1>CosmoShop</h1>
+
+        <p>
+            Премиальная косметика для ухода, красоты и уверенности
+        </p>
+
+        <a asp-controller="Product"
+           asp-action="Index"
+           class="hero-btn">
+
+            Перейти в каталог
+
+        </a>
+
+    </div>
+
+</section>      
+
+<div class="container pb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Популярные товары
+            </h2>
+
+            <p class="text-muted mb-0">
+                Лучшие предложения магазина
+            </p>
+        </div>
+
+        <a asp-controller="Product"
+           asp-action="Index"
+           class="btn btn-outline-primary rounded-pill px-4">
+
+            Весь каталог
+
+        </a>
+
+    </div>
+
+    <div class="row g-4">
+
+        @foreach (var product in Model)
+        {
+            decimal oldPrice = product.Price;
+
+            decimal discountValue = Convert.ToDecimal(product.Discount);
+
+            bool hasDiscount = discountValue >= 1;
+
+            decimal newPrice = hasDiscount
+            ? oldPrice - (oldPrice * discountValue / 100)
+            : oldPrice;
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="modern-product-card">
+
+                    <!-- BADGE -->
+                    @if (hasDiscount)
+                    {
+                        <div class="discount-badge">
+                            -@Convert.ToInt32(product.Discount)%
+                        </div>
+                    }
+
+                    <!-- IMAGE -->
+                    <div class="modern-image-wrapper">
+
+                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                        {
+                            <img src="@product.ImageUrl"
+                                 alt="@product.Name"
+                                 class="modern-product-image" />
+                        }
+                        else
+                        {
+                            <div class="bg-secondary w-100 h-100"></div>
+                        }
+
+                    </div>
+
+                    <!-- CONTENT -->
+                    <div class="modern-product-content">
+
+                        <!-- BRAND -->
+                        <div class="modern-category">
+                            @product.Brand?.Name
+                        </div>
+
+                        <!-- TITLE -->
+                        <h5 class="modern-title">
+                            @product.Name
+                        </h5>
+
+                        <!-- DESCRIPTION -->
+                        <div class="modern-description">
+
+                            @if (!string.IsNullOrWhiteSpace(product.ShortDescription))
+                            {
+                                @product.ShortDescription
+                            }
+                            else
+                            {
+                                <span>Премиальная косметика</span>
+                            }
+
+                        </div>
+
+                        <!-- PRICE -->
+                        <div class="modern-prices">
+
+                            <span class="modern-new-price">
+                                @Math.Round(newPrice) ₽
+                            </span>
+
+                            @if (hasDiscount)
+                            {
+                                <span class="modern-old-price">
+                                    @Math.Round(oldPrice) ₽
+                                </span>
+
+                                <span class="modern-discount-percent">
+                                    -@Convert.ToInt32(product.Discount)%
+                                </span>
+                            }
+
+                        </div>
+
+                        <!-- BUTTONS -->
+                        <div class="modern-buttons">
+
+                            <a asp-controller="Product"
+                               asp-action="Details"
+                               asp-route-id="@product.Id"
+                               class="modern-details-btn">
+
+                                Подробнее
+
+                            </a>
+
+                            <button onclick="addToCart(@product.Id)"
+                                    class="modern-cart-btn">
+
+                                Добавить в корзину
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<style>
+
+    .hero-section {
+        background: linear-gradient(135deg,#4f46e5,#7c3aed,#c026d3);
+        border-radius: 0 0 40px 40px;
+    }
+
+</style>
+
+<script>
+
+    function addToCart(productId) {
+
+        fetch(`/Cart/AddToCart/${productId}`, {
+            method: 'POST'
+        })
+        .then(response => {
+
+            if (response.ok) {
+
+                alert('Товар добавлен в корзину');
+
+                if (typeof updateCartCount === 'function') {
+                    updateCartCount();
+                }
+
+            } else {
+
+                alert('Ошибка');
+
+            }
+
+        })
+        .catch(() => {
+
+            alert('Ошибка');
+
+        });
+    }
+
+</script>

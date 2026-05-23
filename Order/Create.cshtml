@@ -1,0 +1,174 @@
+﻿@model App.Models.Cart
+
+@{
+    ViewData["Title"] = "Оформление заказа";
+}
+
+<div class="container mt-5">
+
+    <h1 class="mb-5 fw-bold">
+        Оформление заказа
+    </h1>
+
+    <div class="row g-4">
+
+        <!-- ЛЕВАЯ ЧАСТЬ -->
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm border-0 rounded-4">
+
+                <div class="card-body p-4">
+
+                    <form asp-action="CreateOrder" method="post">
+
+                        <!-- АДРЕС -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold fs-5">
+                                Адрес доставки
+                            </label>
+
+                            <input type="text"
+                                   name="address"
+                                   class="form-control form-control-lg"
+                                   placeholder="Введите адрес"
+                                   required />
+
+                        </div>
+
+                        <!-- ДАТА -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Дата доставки
+                            </label>
+
+                            <input type="date"
+                                   name="deliveryDate"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Время доставки
+                            </label>
+
+                            <select name="deliveryTime"
+                                    class="form-select"
+                                    required>
+
+                                <option value="10:00">10:00 - 13:00</option>
+
+                                <option value="13:00">13:00 - 16:00</option>
+
+                                <option value="16:00">16:00 - 19:00</option>
+
+                                <option value="19:00">19:00 - 22:00</option>
+
+                            </select>
+                        </div>
+
+                        <!-- КОММЕНТ -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold fs-5">
+                                Комментарий
+                            </label>
+
+                            <textarea name="comment"
+                                      class="form-control"
+                                      rows="5"
+                                      placeholder="Комментарий к заказу"></textarea>
+
+                        </div>
+
+                        <!-- КНОПКА -->
+                        <button type="submit"
+                                class="btn btn-success btn-lg w-100 py-3 fw-bold rounded-4">
+
+                            Подтвердить заказ
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ПРАВАЯ ЧАСТЬ -->
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm border-0 rounded-4">
+
+                <div class="card-body p-4">
+
+                    <h2 class="fw-bold mb-4">
+                        Ваш заказ
+                    </h2>
+
+                    <!-- ТОВАРЫ -->
+                    @foreach (var item in Model.CartItems)
+                    {
+                        var price = item.Product?.Price ?? 0;
+                        var total = price * item.Quantity;
+
+                        <div class="border-bottom pb-3 mb-3">
+
+                            <div class="fw-semibold">
+
+                                @item.Product?.Name
+
+                            </div>
+
+                            <div class="text-muted small">
+
+                                @item.Quantity шт.
+
+                            </div>
+
+                            <div class="text-success fw-bold mt-1">
+
+                                @total.ToString("0 ₽")
+
+                            </div>
+
+                        </div>
+                    }
+
+                    <!-- ИТОГО -->
+                    <div class="d-flex justify-content-between mt-4">
+
+                        <span class="fs-5">
+                            Товары:
+                        </span>
+
+                        <strong class="fs-5">
+                            @Model.CartItems.Sum(x => x.Quantity) шт.
+                        </strong>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-3">
+
+                        <span class="fs-5">
+                            Сумма:
+                        </span>
+
+                        <strong class="fs-4 text-success">
+                            @ViewBag.Total ₽
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,131 @@
+﻿[
+  {
+    "article": "CER-001",
+    "name": "CeraVe Moisturizing Cream",
+    "brand": "CeraVe",
+    "category": "Уход за лицом",
+    "price": 1490,
+    "discount": 10,
+    "stock": 25,
+    "description": "Увлажняющий крем для сухой кожи.",
+    "shortDescription": "Крем с церамидами",
+    "imageUrl": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "CER-002",
+    "name": "CeraVe Foaming Cleanser",
+    "brand": "CeraVe",
+    "category": "Уход за лицом",
+    "price": 990,
+    "discount": 0,
+    "stock": 30,
+    "description": "Очищающий гель для кожи.",
+    "shortDescription": "Очищающий гель",
+    "imageUrl": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "LRP-001",
+    "name": "La Roche-Posay Hyalu B5 Serum",
+    "brand": "La Roche-Posay",
+    "category": "Уход за лицом",
+    "price": 2450,
+    "discount": 15,
+    "stock": 18,
+    "description": "Сыворотка с гиалуроновой кислотой.",
+    "shortDescription": "Сыворотка Hyalu B5",
+    "imageUrl": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "ORD-001",
+    "name": "The Ordinary Daily Care Set",
+    "brand": "The Ordinary",
+    "category": "Уход за лицом",
+    "price": 1890,
+    "discount": 5,
+    "stock": 20,
+    "description": "Набор для ежедневного ухода.",
+    "shortDescription": "Набор ухода",
+    "imageUrl": "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "VCH-001",
+    "name": "Vichy Premium Night Care",
+    "brand": "Vichy",
+    "category": "Уход за лицом",
+    "price": 2100,
+    "discount": 10,
+    "stock": 15,
+    "description": "Ночной крем для восстановления кожи.",
+    "shortDescription": "Ночной уход",
+    "imageUrl": "https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "BIO-001",
+    "name": "Bioderma Sensibio H2O",
+    "brand": "Bioderma",
+    "category": "Уход за лицом",
+    "price": 1350,
+    "discount": 0,
+    "stock": 22,
+    "description": "Мицеллярная вода для чувствительной кожи.",
+    "shortDescription": "Sensibio H2O",
+    "imageUrl": "https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "MAY-001",
+    "name": "Maybelline Sky High Mascara",
+    "brand": "Maybelline",
+    "category": "Макияж",
+    "price": 990,
+    "discount": 20,
+    "stock": 40,
+    "description": "Тушь для ресниц.",
+    "shortDescription": "Тушь для ресниц",
+    "imageUrl": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "NYX-001",
+    "name": "NYX Butter Gloss",
+    "brand": "NYX",
+    "category": "Макияж",
+    "price": 790,
+    "discount": 0,
+    "stock": 35,
+    "description": "Блеск для губ.",
+    "shortDescription": "Блеск для губ",
+    "imageUrl": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "LOR-001",
+    "name": "L'Oréal Elseve Repair Shampoo",
+    "brand": "L'Oréal",
+    "category": "Уход за волосами",
+    "price": 650,
+    "discount": 10,
+    "stock": 50,
+    "description": "Шампунь для поврежденных волос.",
+    "shortDescription": "Elseve Shampoo",
+    "imageUrl": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?q=80&w=1200&auto=format&fit=crop"
+  },
+
+  {
+    "article": "PRF-001",
+    "name": "Chanel No.5",
+    "brand": "Chanel",
+    "category": "Парфюм",
+    "price": 8990,
+    "discount": 5,
+    "stock": 8,
+    "description": "Легендарный аромат Chanel No.5.",
+    "shortDescription": "Парфюм Chanel",
+    "imageUrl": "https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1200&auto=format&fit=crop"
+  }
+]

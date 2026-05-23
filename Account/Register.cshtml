@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Регистрация</h2>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="alert alert-success">@ViewBag.Success</div>
+                    }
+
+                    <form asp-action="Register" method="post" id="registerForm">
+                        <div class="mb-3">
+                            <label>Имя пользователя (логин)</label>
+                            <input type="text" name="username" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Полное имя</label>
+                            <input type="text" name="fullName" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control" placeholder="example@gmail.com" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Телефон</label>
+                            <input type="tel" name="phone" id="phoneInput"
+                                   class="form-control"
+                                   placeholder="+7-952-123-45-67"
+                                   maxlength="16" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label>Пароль (минимум 6 символов, буквы + цифры)</label>
+                            <input type="password" name="password" class="form-control" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Зарегистрироваться</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a asp-action="Login">Уже есть аккаунт? Войти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Автоформатирование телефона
+    document.getElementById('phoneInput').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, ''); // оставляем только цифры
+
+        if (value.length > 0) {
+            if (!value.startsWith('7')) {
+                value = '7' + value;
+            }
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+        }
+
+        let formatted = '+7';
+        if (value.length > 1) formatted += '-' + value.substring(1, 4);
+        if (value.length > 4) formatted += '-' + value.substring(4, 7);
+        if (value.length > 7) formatted += '-' + value.substring(7, 9);
+        if (value.length > 9) formatted += '-' + value.substring(9, 11);
+
+        e.target.value = formatted;
+    });
+</script>

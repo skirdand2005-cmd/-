@@ -1,0 +1,223 @@
+﻿@model App.Models.User
+
+@{
+    ViewData["Title"] = "Личный кабинет";
+}
+
+<h2 class="mb-4">Личный кабинет</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="row">
+
+    <!-- ЛЕВАЯ КОЛОНКА -->
+    <div class="col-md-4">
+
+        <div class="card mb-4">
+
+            <div class="card-body">
+
+                <h4 class="mb-3">
+                    @Model.FullName
+                </h4>
+
+                <p>
+                    <strong>Email:</strong>
+                    @Model.Email
+                </p>
+
+                <p>
+                    <strong>Телефон:</strong>
+                    @(string.IsNullOrEmpty(Model.Phone)
+                        ? "Не указан"
+                        : Model.Phone)
+                </p>
+
+                <p>
+                    <strong>Адрес:</strong>
+                    @(string.IsNullOrEmpty(Model.Address)
+                        ? "Не указан"
+                        : Model.Address)
+                </p>
+
+                <a asp-action="Edit"
+                   class="btn btn-primary w-100 mt-3">
+
+                    ✏️ Редактировать профиль
+
+                </a>
+
+                <a asp-action="ChangePassword"
+                   class="btn btn-warning w-100 mt-2">
+
+                    🔑 Сменить пароль
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ПРАВАЯ КОЛОНКА -->
+    <div class="col-md-8">
+
+        <h3 class="mb-4">
+            Мои заказы (@Model.Orders.Count)
+        </h3>
+
+        @if (Model.Orders == null || Model.Orders.Count == 0)
+        {
+            <div class="alert alert-info">
+                У вас пока нет заказов.
+            </div>
+        }
+        else
+        {
+            foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt))
+            {
+                <div class="card mb-4 shadow-sm">
+
+                    <!-- HEADER -->
+                    <div class="card-header d-flex justify-content-between align-items-center">
+
+                        <span>
+                            Заказ №@order.Id
+                            от @order.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        </span>
+
+                        <span class="badge
+                            @(order.Status == "Новый"
+                                ? "bg-primary"
+                                : order.Status == "Отменён"
+                                    ? "bg-secondary"
+                                    : "bg-success")">
+
+                            @order.Status
+
+                        </span>
+
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="card-body">
+
+                        <p>
+                            <strong>Сумма:</strong>
+
+                            <span class="text-success fw-bold">
+                                @order.TotalAmount.ToString("0 ₽")
+                            </span>
+                        </p>
+
+                        <p>
+                            <strong>Адрес:</strong>
+                            @order.Address
+                        </p>
+
+                        @if (order.DeliveryDate != null)
+                        {
+                            <p>
+                                <strong>Дата доставки:</strong>
+                                @order.DeliveryDate.Value.ToString("dd.MM.yyyy HH:mm")
+                            </p>
+                        }
+
+                        <p>
+                            <strong>Комментарий:</strong>
+
+                            @(string.IsNullOrEmpty(order.Comment)
+                                ? "Без комментария"
+                                : order.Comment)
+                        </p>
+
+                        <!-- ТОВАРЫ -->
+                        <h5 class="mt-4 mb-3">
+                            Товары в заказе:
+                        </h5>
+
+                        <ul class="list-group mb-3">
+
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                                    <div>
+
+                                        <div class="fw-semibold">
+                                            @item.Product?.Name
+                                        </div>
+
+                                        <small class="text-muted">
+                                            Количество:
+                                            @item.Quantity шт.
+                                        </small>
+
+                                    </div>
+
+                                    <div class="text-end fw-bold">
+
+                                        @((item.PriceAtPurchase * item.Quantity)
+                                            .ToString("0 ₽"))
+
+                                    </div>
+
+                                </li>
+                            }
+
+                        </ul>
+
+                        <!-- КНОПКА ОТМЕНЫ -->
+                        @if (order.Status == "Новый")
+                        {
+                            <form asp-controller="Order"
+                                  asp-action="Cancel"
+                                  method="post">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@order.Id" />
+
+                                <button type="submit"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Отменить заказ №@order.Id?')">
+
+                                    ❌ Отменить заказ
+
+                                </button>
+
+                            </form>
+                        }
+
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="card-footer">
+
+                        <strong>
+                            Итого:
+                            @order.TotalAmount.ToString("0 ₽")
+                        </strong>
+
+                    </div>
+
+                </div>
+            }
+        }
+
+    </div>
+
+</div>

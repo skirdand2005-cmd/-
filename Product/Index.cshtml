@@ -1,0 +1,470 @@
+﻿@model IEnumerable<App.Models.Product>
+
+@{
+    ViewData["Title"] = "Каталог товаров";
+}
+
+<div class="container py-4">
+
+    <!-- HEADER -->
+    <div class="catalog-header mb-5">
+
+        <h1 class="catalog-title">
+            Каталог товаров
+        </h1>
+
+        <p class="catalog-subtitle">
+            Найдено товаров:
+            <strong>@ViewBag.TotalProducts</strong>
+        </p>
+
+    </div>
+
+    <div class="row g-4">
+
+        <!-- SIDEBAR -->
+        <div class="col-lg-3">
+
+            <div class="sidebar-sticky">
+
+                <!-- CATEGORIES -->
+                <div class="filter-box mb-4">
+
+                    <h4 class="sidebar-title">
+                        Категории
+                    </h4>
+
+                    <!-- CATEGORY SEARCH -->
+                    <input type="text"
+                           class="sidebar-search category-search"
+                           placeholder="Поиск категории..." />
+
+                    <div class="d-flex flex-column gap-2 category-list">
+
+                        <!-- ALL PRODUCTS -->
+                        @if (string.IsNullOrEmpty(ViewBag.CurrentCategory))
+                        {
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-brand="@ViewBag.CurrentBrand"
+                               class="category-link active-category">
+
+                                Все товары
+
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-brand="@ViewBag.CurrentBrand"
+                               class="category-link">
+
+                                Все товары
+
+                            </a>
+                        }
+
+                        <!-- CATEGORY LIST -->
+                        @foreach (var cat in ViewBag.Categories)
+                        {
+                            @if (ViewBag.CurrentCategory == cat.Name)
+                            {
+                                <a asp-action="Index"
+                                   asp-route-category="@cat.Name"
+                                   asp-route-search="@ViewBag.Search"
+                                   asp-route-brand="@ViewBag.CurrentBrand"
+                                   class="category-link active-category">
+
+                                    @cat.Name
+
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index"
+                                   asp-route-category="@cat.Name"
+                                   asp-route-search="@ViewBag.Search"
+                                   asp-route-brand="@ViewBag.CurrentBrand"
+                                   class="category-link">
+
+                                    @cat.Name
+
+                                </a>
+                            }
+                        }
+
+                    </div>
+
+                </div>
+
+                <!-- BRANDS -->
+                <div class="filter-box">
+
+                    <h4 class="sidebar-title">
+                        Бренды
+                    </h4>
+
+                    <!-- BRAND SEARCH -->
+                    <input type="text"
+                           class="sidebar-search brand-search"
+                           placeholder="Поиск брендов..." />
+
+                    <div class="brand-list">
+
+                        <!-- ALL BRANDS -->
+                        @if (string.IsNullOrEmpty(ViewBag.CurrentBrand))
+                        {
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-category="@ViewBag.CurrentCategory"
+                               class="category-link active-category">
+
+                                Все бренды
+
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-category="@ViewBag.CurrentCategory"
+                               class="category-link">
+
+                                Все бренды
+
+                            </a>
+                        }
+
+                        <!-- BRAND LIST -->
+                        @foreach (var brand in ViewBag.Brands)
+                        {
+                            @if (ViewBag.CurrentBrand == brand.Name)
+                            {
+                                <a asp-action="Index"
+                                   asp-route-brand="@brand.Name"
+                                   asp-route-search="@ViewBag.Search"
+                                   asp-route-category="@ViewBag.CurrentCategory"
+                                   class="category-link brand-link active-category">
+
+                                    @brand.Name
+
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index"
+                                   asp-route-brand="@brand.Name"
+                                   asp-route-search="@ViewBag.Search"
+                                   asp-route-category="@ViewBag.CurrentCategory"
+                                   class="category-link brand-link">
+
+                                    @brand.Name
+
+                                </a>
+                            }
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- PRODUCTS -->
+        <div class="col-lg-9">
+
+            <!-- TOPBAR -->
+            <div class="products-topbar">
+
+                <h4 class="products-count">
+
+                    Найдено товаров:
+                    @ViewBag.TotalProducts
+
+                </h4>
+
+                <!-- SORT -->
+                <form method="get">
+
+                    <input type="hidden"
+                           name="search"
+                           value="@Context.Request.Query["search"]" />
+
+                    <input type="hidden"
+                           name="category"
+                           value="@Context.Request.Query["category"]" />
+
+                    <input type="hidden"
+                           name="brand"
+                           value="@Context.Request.Query["brand"]" />
+
+                    <select name="sort"
+                            class="form-select sort-select"
+                            onchange="this.form.submit()">
+
+                        @if (ViewBag.CurrentSort == "popular")
+                        {
+                            <option value="popular" selected>
+                                По популярности
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="popular">
+                                По популярности
+                            </option>
+                        }
+
+                        @if (ViewBag.CurrentSort == "price_desc")
+                        {
+                            <option value="price_desc" selected>
+                                По убыванию цены
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="price_desc">
+                                По убыванию цены
+                            </option>
+                        }
+
+                        @if (ViewBag.CurrentSort == "price_asc")
+                        {
+                            <option value="price_asc" selected>
+                                По возрастанию цены
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="price_asc">
+                                По возрастанию цены
+                            </option>
+                        }
+
+                        @if (ViewBag.CurrentSort == "discount")
+                        {
+                            <option value="discount" selected>
+                                По размеру скидки
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="discount">
+                                По размеру скидки
+                            </option>
+                        }
+
+                        @if (ViewBag.CurrentSort == "new")
+                        {
+                            <option value="new" selected>
+                                По новизне
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="new">
+                                По новизне
+                            </option>
+                        }
+
+                    </select>
+
+                </form>
+
+            </div>
+
+            <!-- PRODUCTS GRID -->
+            <div class="row g-4">
+
+                @foreach (var product in Model)
+                {
+                    decimal oldPrice = product.Price;
+
+                    decimal discountValue =
+                    Convert.ToDecimal(product.Discount);
+
+                    bool hasDiscount = discountValue >= 1;
+
+                    decimal newPrice = hasDiscount
+                    ? oldPrice - (oldPrice * discountValue / 100)
+                    : oldPrice;
+
+                    <div class="col-xl-4 col-md-6">
+
+                        <div class="modern-product-card">
+
+                            <!-- DISCOUNT -->
+                            @if (hasDiscount)
+                            {
+                                <div class="discount-badge">
+
+                                    -@Convert.ToInt32(product.Discount)%
+
+                                </div>
+                            }
+
+                            <!-- IMAGE -->
+                            <div class="modern-image-wrapper">
+
+                                <img src="@product.ImageUrl"
+                                     alt="@product.Name"
+                                     class="modern-product-image" />
+
+                            </div>
+
+                            <!-- CONTENT -->
+                            <div class="modern-product-content">
+
+                                <!-- BRAND -->
+                                <div class="modern-category">
+
+                                    @product.Brand?.Name
+
+                                </div>
+
+                                <!-- TITLE -->
+                                <h5 class="modern-title">
+
+                                    @product.Name
+
+                                </h5>
+
+                                <!-- DESCRIPTION -->
+                                <div class="modern-description">
+
+                                    @if (!string.IsNullOrWhiteSpace(product.ShortDescription))
+                                    {
+                                        @product.ShortDescription
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Премиальная косметика
+                                        </span>
+                                    }
+
+                                </div>
+
+                                <!-- PRICES -->
+                                <div class="modern-prices">
+
+                                    <span class="modern-new-price">
+
+                                        @Math.Round(newPrice) ₽
+
+                                    </span>
+
+                                    @if (hasDiscount)
+                                    {
+                                        <span class="modern-old-price">
+
+                                            @Math.Round(oldPrice) ₽
+
+                                        </span>
+
+                                        <span class="modern-discount-percent">
+
+                                            -@Convert.ToInt32(product.Discount)%
+
+                                        </span>
+                                    }
+
+                                </div>
+
+                                <!-- BUTTONS -->
+                                <div class="modern-buttons">
+
+                                    <a asp-controller="Product"
+                                       asp-action="Details"
+                                       asp-route-id="@product.Id"
+                                       class="modern-details-btn">
+
+                                        Подробнее
+
+                                    </a>
+
+                                    <form asp-controller="Cart"
+                                          asp-action="AddToCart"
+                                          method="post">
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@product.Id" />
+
+                                        <button type="submit"
+                                                class="modern-cart-btn">
+
+                                            Добавить в корзину
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center mt-5">
+
+                    Товары не найдены
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // CATEGORY SEARCH
+    document.querySelector('.category-search')
+        ?.addEventListener('keyup', function () {
+
+            let value = this.value.toLowerCase();
+
+            document.querySelectorAll('.category-list a')
+                .forEach(item => {
+
+                    item.style.display =
+                        item.innerText.toLowerCase().includes(value)
+                            ? 'block'
+                            : 'none';
+
+                });
+
+        });
+
+    // BRAND SEARCH
+    document.querySelector('.brand-search')
+        ?.addEventListener('keyup', function () {
+
+            let value = this.value.toLowerCase();
+
+            document.querySelectorAll('.brand-link')
+                .forEach(item => {
+
+                    item.style.display =
+                        item.innerText.toLowerCase().includes(value)
+                            ? 'block'
+                            : 'none';
+
+                });
+
+        });
+
+</script>
